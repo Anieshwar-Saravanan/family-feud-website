@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Family Feud - School Edition</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@700;800;900&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Ambient Spotlight & Stage Background -->
+  <div class="stage-background">
+    <div class="spotlight spotlight-left"></div>
+    <div class="spotlight spotlight-center"></div>
+    <div class="spotlight spotlight-right"></div>
+    <div class="stage-fog"></div>
+    <div class="stage-floor"></div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div id="app" class="app-container">
+
+    <!-- ==================== 1. START SCREEN ==================== -->
+    <section id="start-screen" class="screen active">
+      <div class="start-stage">
+        <!-- Floating Stage Lights -->
+        <div class="light-beam-overlay"></div>
+
+        <!-- Classic Family Feud Logo Marquee -->
+        <div class="feud-marquee-wrapper">
+          <div class="feud-gold-frame">
+            <div class="feud-inner-matrix">
+              <div class="matrix-dots"></div>
+              <div class="feud-title-container">
+                <h1 class="feud-word-family">FAMILY</h1>
+                <h1 class="feud-word-feud">FEUD</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="event-tagline">SCHOOL KIDS EDITION • 10 QUESTION SETS</div>
+
+        <!-- Start Button matching image 1 -->
+        <div class="start-button-wrapper">
+          <button id="btn-start" class="feud-pill-btn btn-start-game" title="Start Game (Press Space or Click)">
+            <span class="btn-text">START</span>
+            <span class="btn-arrow-circle">
+              <svg viewBox="0 0 24 24" class="arrow-icon">
+                <path d="M5 3l14 9-14 9V3z" fill="currentColor"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        <!-- Quick Start Bar -->
+        <div class="start-aux-bar">
+          <button id="btn-open-editor-start" class="aux-btn">
+            <span>✏️ Edit Questions</span>
+          </button>
+          <button id="btn-shortcuts-start" class="aux-btn">
+            <span>⌨️ Keyboard Shortcuts</span>
+          </button>
+          <button id="btn-sound-start" class="aux-btn">
+            <span id="start-sound-label">🔊 Sound: ON</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 2. SET SELECTION SCREEN ==================== -->
+    <section id="set-screen" class="screen">
+      <div class="set-selection-wrapper">
+        <div class="set-header">
+          <h2 class="section-title">CHOOSE QUESTION SET</h2>
+          <p class="section-subtitle">Select which round or topic to play from the 10 available sets</p>
+        </div>
+
+        <div class="set-grid" id="set-cards-grid">
+          <!-- Dynamically populated 10 question cards -->
+        </div>
+
+        <div class="set-footer-bar">
+          <button id="btn-back-to-title" class="aux-btn-large">
+            <span>⬅ Back to Title</span>
+          </button>
+          <button id="btn-start-from-first" class="primary-btn-large">
+            <span>Play Set 1 ➡</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. GAMEPLAY SCREEN (Matches Image 2) ==================== -->
+    <section id="game-screen" class="screen">
+      
+      <!-- Top Host Navigation Bar -->
+      <header class="game-top-bar">
+        <div class="top-bar-left">
+          <button id="btn-choose-set-top" class="top-pill-btn" title="Choose Set (Press S)">
+            <span class="badge-icon">📋</span>
+            <span id="top-set-indicator">SET 1 OF 10</span>
+          </button>
+          <button id="btn-host-sheet-toggle" class="top-pill-btn" title="Toggle Host Cheat Sheet (Press H)">
+            <span class="badge-icon">👁</span>
+            <span>Host Sheet</span>
+          </button>
+        </div>
+
+        <div class="top-bar-center">
+          <!-- Bank Pot / Round Total -->
+          <div class="bank-pill">
+            <span class="bank-label">ROUND BANK:</span>
+            <span id="round-bank-display" class="bank-value">0</span>
+            <span class="bank-pts">PTS</span>
+          </div>
+        </div>
+
+        <div class="top-bar-right">
+          <button id="btn-undo-top" class="top-pill-btn undo-btn" title="Undo Last Action (Press U)">
+            <span class="badge-icon">↩</span>
+            <span>Undo (U)</span>
+          </button>
+          <button id="btn-sound-toggle" class="icon-btn" title="Toggle Sound (Press M)">
+            <span id="top-sound-icon">🔊</span>
+          </button>
+          <button id="btn-fullscreen-toggle" class="icon-btn" title="Toggle Fullscreen (Press F)">
+            <span>⛶</span>
+          </button>
+          <button id="btn-help-toggle" class="icon-btn" title="Keyboard Shortcuts (Press ?)">
+            <span>❓</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Question Banner -->
+      <div class="question-container">
+        <h2 id="current-question-text" class="question-text">
+        </h2>
+      </div>
+
+      <!-- Secret Host Cheat Sheet Drawer (Toggled with H) -->
+      <div id="host-cheat-sheet" class="host-cheat-sheet hidden">
+        <div class="cheat-sheet-header">
+          <span class="sheet-title">🤫 HOST CHEAT SHEET (HIDDEN FROM KIDS)</span>
+          <span class="sheet-hint">Press <b>H</b> to toggle • Press <b>1-6</b> to reveal</span>
+          <button id="btn-close-cheat-sheet" class="btn-close-sheet">✕</button>
+        </div>
+        <div id="cheat-sheet-items" class="cheat-sheet-grid">
+          <!-- Populated dynamically with answer 1-6 + points -->
+        </div>
+      </div>
+
+      <!-- 6-Slot Game Board (2 Columns x 3 Rows) -->
+      <main class="board-container">
+        <div class="board-frame">
+          <div class="board-grid" id="board-slots-grid">
+            <!-- Left Column: Slots 1, 2, 3 -->
+            <div class="board-column board-column-left">
+              <div class="board-slot" data-slot="1" id="slot-1">
+                <div class="slot-inner">
+                  <div class="slot-face slot-front">
+                    <div class="slot-number-badge">1</div>
+                    <div class="slot-closed-hint">PRESS 1</div>
+                  </div>
+                  <div class="slot-face slot-back">
+                    <div class="slot-answer-text">WATCHING MOVIES</div>
+                    <div class="slot-points-badge">40</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="board-slot" data-slot="2" id="slot-2">
+                <div class="slot-inner">
+                  <div class="slot-face slot-front">
+                    <div class="slot-number-badge">2</div>
+                    <div class="slot-closed-hint">PRESS 2</div>
+                  </div>
+                  <div class="slot-face slot-back">
+                    <div class="slot-answer-text">GOING OUT</div>
+                    <div class="slot-points-badge">25</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="board-slot" data-slot="3" id="slot-3">
+                <div class="slot-inner">
+                  <div class="slot-face slot-front">
+                    <div class="slot-number-badge">3</div>
+                    <div class="slot-closed-hint">PRESS 3</div>
+                  </div>
+                  <div class="slot-face slot-back">
+                    <div class="slot-answer-text">SLEEPING</div>
+                    <div class="slot-points-badge">15</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Slots 4, 5, 6 -->
+            <div class="board-column board-column-right">
+              <div class="board-slot" data-slot="4" id="slot-4">
+                <div class="slot-inner">
+                  <div class="slot-face slot-front">
+                    <div class="slot-number-badge">4</div>
+                    <div class="slot-closed-hint">PRESS 4</div>
+                  </div>
+                  <div class="slot-face slot-back">
+                    <div class="slot-answer-text">READING BOOKS</div>
+                    <div class="slot-points-badge">10</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="board-slot" data-slot="5" id="slot-5">
+                <div class="slot-inner">
+                  <div class="slot-face slot-front">
+                    <div class="slot-number-badge">5</div>
+                    <div class="slot-closed-hint">PRESS 5</div>
+                  </div>
+                  <div class="slot-face slot-back">
+                    <div class="slot-answer-text">ONLINE GAMES</div>
+                    <div class="slot-points-badge">5</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="board-slot" data-slot="6" id="slot-6">
+                <div class="slot-inner">
+                  <div class="slot-face slot-front">
+                    <div class="slot-number-badge">6</div>
+                    <div class="slot-closed-hint">PRESS 6</div>
+                  </div>
+                  <div class="slot-face slot-back">
+                    <div class="slot-answer-text">COOKING A SPECIAL MEAL</div>
+                    <div class="slot-points-badge">1</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Bottom Scoreboard & Controls Area (Matches Image 2) -->
+      <footer class="game-footer">
+        <!-- Previous Question Arrow Button (Left) -->
+        <button id="btn-prev-question" class="round-nav-btn nav-btn-left" title="Previous Question (←)">
+          <svg viewBox="0 0 24 24" class="nav-arrow-icon">
+            <path d="M15 19l-7-7 7-7v14z" fill="currentColor"/>
+          </svg>
+        </button>
+
+        <!-- TEAM 1 CARD (Amber/Brown) -->
+        <div class="team-panel team-1-panel">
+          <div class="team-header">
+            <input type="text" id="team-1-name" class="team-name-input" value="TEAM 1" title="Click to rename team">
+          </div>
+          <div class="team-score-body">
+            <!-- Mechanical Digit Flip Tiles -->
+            <div class="score-display-group">
+              <div class="score-tile" id="t1-digit-1">0</div>
+              <div class="score-tile" id="t1-digit-2">0</div>
+            </div>
+            <!-- Score Up / Down Adjustment Arrows -->
+            <div class="score-arrow-controls">
+              <button class="arrow-btn arrow-up" id="btn-t1-up" title="Add 1 point">▲</button>
+              <button class="arrow-btn arrow-down" id="btn-t1-down" title="Subtract 1 point">▼</button>
+            </div>
+          </div>
+          <!-- Team Action Row -->
+          <div class="team-actions-row">
+            <button id="btn-t1-reset" class="team-mini-btn btn-reset">RESET</button>
+            <button id="btn-t1-bank" class="team-mini-btn btn-award" title="Award current round points to Team 1">+ BANK</button>
+          </div>
+        </div>
+
+        <!-- CENTER CONSOLE (Sad face, Strike X, Happy face, Scoreboard pill) -->
+        <div class="center-console-panel">
+          <!-- Strike Indicators Bar (shows currently active strikes) -->
+          <div class="strikes-status-bar" id="strikes-status-bar" title="Active strikes for current round">
+            <span class="strike-dot" id="s-dot-1">X</span>
+            <span class="strike-dot" id="s-dot-2">X</span>
+            <span class="strike-dot" id="s-dot-3">X</span>
+          </div>
+
+          <!-- The 3 Action Buttons matching image 2 -->
+          <div class="center-buttons-row">
+            <!-- Sad Face Button -->
+            <button id="btn-sad-face" class="console-circle-btn btn-sad" title="Play Buzzer / Aw (Sad Face)">
+              <svg viewBox="0 0 36 36" class="console-face-svg">
+                <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                <circle cx="12" cy="14" r="2.2" fill="currentColor"/>
+                <circle cx="24" cy="14" r="2.2" fill="currentColor"/>
+                <!-- Sad mouth curve -->
+                <path d="M11 25 C14 20, 22 20, 25 25" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+
+            <!-- Red Strike X Button (Matches Image 2 Square Red Box) -->
+            <button id="btn-strike-x" class="console-strike-btn" title="Strike (Press X: 1st X, 2nd XX, 3rd XXX)">
+              <div class="strike-btn-inner">
+                <span class="strike-x-glyph">X</span>
+              </div>
+            </button>
+
+            <!-- Happy Face Button -->
+            <button id="btn-happy-face" class="console-circle-btn btn-happy" title="Play Applause / Cheer (Happy Face)">
+              <svg viewBox="0 0 36 36" class="console-face-svg">
+                <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                <circle cx="12" cy="14" r="2.2" fill="currentColor"/>
+                <circle cx="24" cy="14" r="2.2" fill="currentColor"/>
+                <!-- Happy smile curve -->
+                <path d="M11 21 C14 26, 22 26, 25 21" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Scoreboard Pill Button matching image 2 -->
+          <div class="scoreboard-pill-row">
+            <button id="btn-open-scoreboard" class="scoreboard-pill-btn" title="Open Full Scoreboard">
+              <span class="sb-label">SCOREBOARD</span>
+              <span class="sb-arrow-circle">
+                <svg viewBox="0 0 24 24" class="sb-arrow-icon">
+                  <path d="M5 3l14 9-14 9V3z" fill="currentColor"/>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TEAM 2 CARD (Forest Green) -->
+        <div class="team-panel team-2-panel">
+          <div class="team-header">
+            <input type="text" id="team-2-name" class="team-name-input" value="TEAM 2" title="Click to rename team">
+          </div>
+          <div class="team-score-body">
+            <!-- Mechanical Digit Flip Tiles -->
+            <div class="score-display-group">
+              <div class="score-tile" id="t2-digit-1">0</div>
+              <div class="score-tile" id="t2-digit-2">0</div>
+            </div>
+            <!-- Score Up / Down Adjustment Arrows -->
+            <div class="score-arrow-controls">
+              <button class="arrow-btn arrow-up" id="btn-t2-up" title="Add 1 point">▲</button>
+              <button class="arrow-btn arrow-down" id="btn-t2-down" title="Subtract 1 point">▼</button>
+            </div>
+          </div>
+          <!-- Team Action Row -->
+          <div class="team-actions-row">
+            <button id="btn-t2-reset" class="team-mini-btn btn-reset">RESET</button>
+            <button id="btn-t2-bank" class="team-mini-btn btn-award" title="Award current round points to Team 2">+ BANK</button>
+          </div>
+        </div>
+
+        <!-- Next Question Arrow Button (Right) -->
+        <button id="btn-next-question" class="round-nav-btn nav-btn-right" title="Next Question (→)">
+          <svg viewBox="0 0 24 24" class="nav-arrow-icon">
+            <path d="M9 5l7 7-7 7V5z" fill="currentColor"/>
+          </svg>
+        </button>
+      </footer>
+    </section>
+
+    <!-- ==================== 4. DRAMATIC STRIKE POPUP OVERLAY ==================== -->
+    <div id="strike-overlay" class="strike-overlay hidden">
+      <div class="strike-backdrop" id="strike-backdrop"></div>
+      <div class="strike-content-box" id="strike-content-box">
+        <!-- Render 1, 2, or 3 glowing red giant Xs -->
+        <div class="strike-x-display" id="strike-x-display">
+          <div class="giant-red-x">X</div>
+        </div>
+        <div class="strike-subtext" id="strike-subtext">STRIKE 1</div>
+        <div class="strike-close-hint">Press <b>Esc</b> or Click to close • Press <b>U</b> to Undo</div>
+      </div>
+    </div>
+
+    <!-- ==================== 5. FULL SCOREBOARD MODAL ==================== -->
+    <div id="modal-scoreboard" class="modal-backdrop hidden">
+      <div class="modal-box scoreboard-modal-box">
+        <div class="modal-header">
+          <h3 class="modal-title">🏆 GAME SHOW SCOREBOARD</h3>
+          <button class="modal-close-btn" id="btn-close-scoreboard">✕</button>
+        </div>
+        <div class="modal-body scoreboard-modal-body">
+          <div class="scoreboard-teams-compare">
+            <!-- Team 1 Card -->
+            <div class="sb-team-card sb-team-1">
+              <div class="sb-team-tag" id="sb-t1-tag">TEAM 1</div>
+              <div class="sb-team-score" id="sb-t1-score">0</div>
+              <div class="sb-team-pts">TOTAL POINTS</div>
+            </div>
+            <!-- VS badge -->
+            <div class="sb-vs-badge">VS</div>
+            <!-- Team 2 Card -->
+            <div class="sb-team-card sb-team-2">
+              <div class="sb-team-tag" id="sb-t2-tag">TEAM 2</div>
+              <div class="sb-team-score" id="sb-t2-score">0</div>
+              <div class="sb-team-pts">TOTAL POINTS</div>
+            </div>
+          </div>
+
+          <!-- Score Difference Progress Bar -->
+          <div class="sb-progress-container">
+            <div class="sb-progress-bar-t1" id="sb-progress-t1" style="width: 50%;"></div>
+            <div class="sb-progress-bar-t2" id="sb-progress-t2" style="width: 50%;"></div>
+          </div>
+
+          <!-- Sets Progress / Summary -->
+          <div class="sb-sets-summary">
+            <h4>Sets Completed: <span id="sb-completed-count">0 / 10</span></h4>
+            <div class="sb-sets-dots" id="sb-sets-dots">
+              <!-- 10 dots -->
+            </div>
+          </div>
+
+          <div class="sb-actions-row">
+            <button id="btn-celebrate-winner" class="action-btn celebrate-btn">🎉 Celebrate Leader / Winner!</button>
+            <button id="btn-reset-all-scores" class="action-btn danger-btn">🔄 Reset All Scores</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 6. QUESTION MANAGER / EDITOR MODAL ==================== -->
+    <div id="modal-editor" class="modal-backdrop hidden">
+      <div class="modal-box editor-modal-box">
+        <div class="modal-header">
+          <h3 class="modal-title">✏️ QUESTION SETS MANAGER</h3>
+          <button class="modal-close-btn" id="btn-close-editor">✕</button>
+        </div>
+        <div class="modal-body editor-modal-body">
+          <div class="editor-set-tabs" id="editor-set-tabs">
+            <!-- Tabs 1 to 10 -->
+          </div>
+          <div class="editor-set-tabs" id="editor-question-tabs">
+            <!-- Question tabs Q1 to Q7 of the selected set -->
+          </div>
+
+          <div class="editor-form" id="editor-form">
+            <div class="form-row">
+              <label for="edit-set-title">Set Topic / Title:</label>
+              <input type="text" id="edit-set-title" class="form-input">
+            </div>
+            <div class="form-row">
+              <label for="edit-set-question">Question:</label>
+              <textarea id="edit-set-question" rows="2" class="form-input"></textarea>
+            </div>
+
+            <div class="editor-answers-header">
+              <span>6 Board Answers & Point Values:</span>
+              <span class="total-pts-hint" id="edit-total-pts">Total: 100 Pts</span>
+            </div>
+
+            <div class="editor-answers-grid" id="editor-answers-grid">
+              <!-- 6 Answer rows (Answer text + points) -->
+            </div>
+          </div>
+
+          <div class="editor-buttons-footer">
+            <div class="left-actions">
+              <button id="btn-export-questions" class="aux-btn">📥 Export JSON</button>
+              <button id="btn-import-questions" class="aux-btn">📤 Import JSON</button>
+              <input type="file" id="import-file-input" accept=".json" style="display:none;">
+              <button id="btn-reset-questions" class="aux-btn danger-text">↺ Reset Defaults</button>
+            </div>
+            <div class="right-actions">
+              <button id="btn-save-questions" class="primary-btn-large">💾 Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 7. KEYBOARD SHORTCUTS HELPER MODAL ==================== -->
+    <div id="modal-shortcuts" class="modal-backdrop hidden">
+      <div class="modal-box shortcuts-modal-box">
+        <div class="modal-header">
+          <h3 class="modal-title">⌨️ KEYBOARD SHORTCUTS</h3>
+          <button class="modal-close-btn" id="btn-close-shortcuts">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="shortcuts-grid">
+            <div class="shortcut-item">
+              <span class="key-badge">1</span> - <span class="key-badge">6</span>
+              <span class="shortcut-desc">Reveal answer option 1 through 6</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="key-badge">x</span>
+              <span class="shortcut-desc">Strike! (1st: <b>X</b>, 2nd: <b>XX</b>, 3rd: <b>XXX</b>, then resets to <b>X</b>)</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="key-badge">Shift + X</span>
+              <span class="shortcut-desc">Steal Strike! (Shows only <b>1 X</b> popup)</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="key-badge">u</span>
+              <span class="shortcut-desc"><b>UNDO / Fall Back:</b> Revert last answer reveal, strike, or score!</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="key-badge">←</span> / <span class="key-badge">→</span>
+              <span class="shortcut-desc">Previous / Next Question (rolls into the next set)</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="key-badge">s</span>
+              <span class="shortcut-desc">Open Question Set Selector</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="key-badge">h</span>
+              <span class="shortcut-desc">Toggle secret Host Cheat Sheet</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="key-badge">f</span>
+              <span class="shortcut-desc">Toggle Fullscreen mode</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="key-badge">m</span>
+              <span class="shortcut-desc">Mute / Unmute sound effects</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="key-badge">Esc</span>
+              <span class="shortcut-desc">Dismiss Strike overlay or close modal</span>
+            </div>
+          </div>
+          <div class="modal-tip-box">
+            💡 <b>Tip for Host:</b> You can also click directly on any board slot or scoreboard button with your mouse!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 8. TOAST NOTIFICATIONS ==================== -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Confetti Canvas for Winners -->
+    <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  </div>
+
+  <!-- Scripts -->
+  <!-- Bump ?v= whenever questions.js / app.js change so browsers don't serve stale cached copies -->
+  <script src="questions.js?v=5"></script>
+  <script src="sound.js?v=5"></script>
+  <script src="app.js?v=5"></script>
+</body>
+</html>
